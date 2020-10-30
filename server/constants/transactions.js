@@ -10,3 +10,8 @@ export const FEES_ON_TOP_TRANSACTION_PROPERTIES = {
   hostCurrency: 'USD',
   currency: 'USD',
 };
+
+export const FEES_ON_TOP_SETTLEMENT_EXPENSE_PROPERTIES = {
+  FromCollectiveId: 8686,
+  PayoutMethodId: 2955,
+};
