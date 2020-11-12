@@ -15,10 +15,12 @@ const checkIsActive = (
  */
 export const getFeatureStatusResolver = (feature: FEATURE) => async (collective): Promise<FEATURE_STATUS> => {
   if (!collective) {
+    console.log('no collective')
     return FEATURE_STATUS.UNSUPPORTED;
   } else if (!isFeatureAllowedForCollectiveType(collective.type, collective.isHostAccount, feature)) {
     return FEATURE_STATUS.UNSUPPORTED;
   } else if (!hasFeature(collective, feature)) {
+    console.log('no t has feature')
     return FEATURE_STATUS.DISABLED;
   }
 
