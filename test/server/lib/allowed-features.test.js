@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import FEATURE from '../../../server/constants/feature';
-import hasFeature, { isFeatureAllowedForCollectiveType } from '../../../server/lib/allowed-features';
+import { hasFeature, isFeatureAllowedForCollectiveType } from '../../../server/lib/allowed-features';
 import { fakeCollective } from '../../test-helpers/fake-data';
 
 describe('server/lib/allowed-features', () => {
