@@ -878,7 +878,6 @@ export const CollectiveInterfaceType = new GraphQLInterfaceType({
 });
 
 const FeaturesFields = () => {
-  //CollectiveFeatures
   return FeaturesList.reduce(
     (obj, feature) =>
       Object.assign(obj, {
