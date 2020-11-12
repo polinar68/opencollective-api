@@ -8,7 +8,6 @@ import FEATURE from '../constants/feature';
 const FeatureAllowedForTypes = {
   // 1. Contribute
   [FEATURE.CONTRIBUTE]: [types.USER, types.ORGANIZATION, types.COLLECTIVE, types.EVENT, types.FUND, types.PROJECT],
-  [FEATURE.RECEIVE_FINANCIAL_CONTRIBUTIONS]: [types.ORGANIZATION, types.COLLECTIVE, types.EVENT, types.FUND, types.PROJECT],
   [FEATURE.CONTRIBUTIONS]: [types.USER, types.ORGANIZATION, types.COLLECTIVE,  types.FUND],
   [FEATURE.RECURRING_CONTRIBUTIONS]: [types.USER, types.ORGANIZATION, types.COLLECTIVE,  types.FUND],
   // 2. Events/Projects
@@ -18,7 +17,6 @@ const FeatureAllowedForTypes = {
   [FEATURE.BUDGET]: [types.USER, types.ORGANIZATION, types.COLLECTIVE, types.EVENT, types.FUND, types.PROJECT],
   [FEATURE.TRANSACTIONS]: [types.USER, types.ORGANIZATION, types.COLLECTIVE, types.EVENT, types.FUND, types.PROJECT],
   [FEATURE.EXPENSES]: [types.ORGANIZATION, types.COLLECTIVE, types.EVENT, types.FUND, types.PROJECT],
-  [FEATURE.RECEIVE_EXPENSES]: [types.ORGANIZATION, types.COLLECTIVE, types.EVENT],
   [FEATURE.COLLECTIVE_GOALS]: [types.COLLECTIVE, types.ORGANIZATION],
   [FEATURE.TOP_FINANCIAL_CONTRIBUTORS]: [types.COLLECTIVE, types.ORGANIZATION, types.FUND],
   [FEATURE.ALL_FINANCIAL_CONTRIBUTORS]:[types.ORGANIZATION, types.COLLECTIVE, types.EVENT, types.FUND, types.PROJECT],
@@ -38,16 +36,18 @@ const FeatureAllowedForTypes = {
  */
 export const OPT_OUT_FEATURE_FLAGS = {
   [FEATURE.CONTACT_FORM]: 'settings.features.contactForm',
-  [FEATURE.UPDATES]: 'settings.collectivePage.updates',
-  [FEATURE.CONVERSATIONS]: 'settings.collectivePage.conversations',
+  [FEATURE.CONVERSATIONS]: 'settings.features.conversations', 
+  [FEATURE.UPDATES]: 'settings.features.updates', 
 };
 
 export const OPT_IN_FEATURE_FLAGS = {
   [FEATURE.CROSS_CURRENCY_MANUAL_TRANSACTIONS]: 'settings.features.crossCurrencyManualTransactions',
-  [FEATURE.COLLECTIVE_GOALS]: 'settings.collectivePage.showGoals',
-  [FEATURE.TRANSFERWISE]: 'settings.features.transferwise',
-  [FEATURE.PAYPAL_PAYOUTS]: 'settings.features.paypalPayouts',
+  [FEATURE.COLLECTIVE_GOALS]: 'settings.features.showGoals', 
 };
+
+// const OPT_OUT_COLLECTIVE_PAGE_FEATURE_FLAGS = [FEATURE.CONVERSATIONS, FEATURE.UPDATES]
+// const OPT_IN_COLLECTIVE_PAGE_FEATURE_FLAGS = [FEATURE.COLLECTIVE_GOALS]
+
 
 /**
  * Returns true if feature is allowed for this collective type, false otherwise.
@@ -60,12 +60,9 @@ export const isFeatureAllowedForCollectiveType = (  collectiveType: types,
   const allowedForType = allowedTypes ? allowedTypes.includes(collectiveType) : true;
   console.log('allowed?', allowedForType)
   const orgFeaturesOnlyAllowedForHostOrgs = [
-    FEATURE.TRANSFERWISE,
     FEATURE.EXPENSES,
     FEATURE.COLLECTIVE_GOALS,
     FEATURE.TOP_FINANCIAL_CONTRIBUTORS,
-    FEATURE.RECEIVE_FINANCIAL_CONTRIBUTIONS,
-    FEATURE.RECEIVE_EXPENSES
   ]
 
   if (!allowedForType) {
@@ -82,19 +79,29 @@ export const isFeatureAllowedForCollectiveType = (  collectiveType: types,
   return true;
 };
 
-export const hasOptedOutOfFeature = (collective, feature: FEATURE): boolean => {
+export const hasOptedOutOfFeature = (collective, feature): boolean => {
   const optOutFlag = OPT_OUT_FEATURE_FLAGS[feature];
-  console.log(optOutFlag)
-  console.log('get(collective, optOutFlag)', get(collective, optOutFlag))
   return optOutFlag ? get(collective, optOutFlag) === false : false;
 };
 
-export const hasOptedInForFeature = (collective, feature: FEATURE): boolean => {
+export const hasOptedInForFeature = (collective, feature): boolean => {
   const optOutFlag = OPT_IN_FEATURE_FLAGS[feature];
-  console.log(optOutFlag)
-  console.log('get(collective, optOutFlag)', get(collective, optOutFlag))
   return get(collective, optOutFlag) === true;
 };
+
+// const hasOptedOutOfCollectivePageFeature = (collective, feature): boolean => {
+//   const collectivePageSettings = get(collective, 'settings.collectivePage.sections')
+//   const section = collectivePageSettings.find(s => s.section === feature);
+//   console.log(section)
+//   return section?.isEnabled || false;
+// }
+
+// const hasOptedInForCollectivePageFeature = (collective, feature): boolean => {
+//   const collectivePageSettings = get(collective, 'settings.collectivePage.sections')
+//   const section = collectivePageSettings.find(s => s.section === feature);
+//   console.log(section)
+//   return section?.isEnabled || false;
+// }
 
 /**
  * If a given feature is allowed for the collective type, check if it is activated for collective.
@@ -109,6 +116,7 @@ export const hasFeature = (collective, feature: FEATURE): boolean => {
   //   return false;
   // }
 
+
   // Check opt-out flags
   if (feature in OPT_OUT_FEATURE_FLAGS) {
     return !hasOptedOutOfFeature(collective, feature);
@@ -118,6 +126,15 @@ export const hasFeature = (collective, feature: FEATURE): boolean => {
   if (feature in OPT_IN_FEATURE_FLAGS) {
     return hasOptedInForFeature(collective, feature);
   }
+
+  // // Check collective page optional flags
+  // if (OPT_OUT_COLLECTIVE_PAGE_FEATURE_FLAGS.includes(feature)) {
+  //   return hasOptedOutOfCollectivePageFeature(collective, feature);
+  // }
+
+  // if (OPT_IN_COLLECTIVE_PAGE_FEATURE_FLAGS.includes(feature)) {
+  //   return hasOptedInForCollectivePageFeature(collective, feature);
+  // }
 
   return true;
   

@@ -33,14 +33,6 @@ export const getFeatureStatusResolver = (feature: FEATURE) => async (collective)
           limit: 1,
         }),
       );
-    case FEATURE.TRANSFERWISE:
-      return checkIsActive(
-        models.ConnectedAccount.count({
-          where: { service: 'transferwise', CollectiveId: collective.id },
-          limit: 1,
-        }),
-        FEATURE_STATUS.DISABLED,
-      );
     default:
       return FEATURE_STATUS.ACTIVE;
   }
